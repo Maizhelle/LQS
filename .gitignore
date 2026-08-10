@@ -1,0 +1,24 @@
+# Compiled class files from java yes
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# IDE (IntelliJ, Eclipse, VS Code)
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Build directories
+bin/
+build/
+out/
+
+# OS gen files
+.DS_Store
+Thumbs.db
