@@ -1,0 +1,47 @@
+FOLLOW THE NAMING CONVENTION!!!!!
+
+Student----------- (separate java files)
+studentName (private)
+studentID (private)
+
+Methods:
+Getter methods for name and ID
+Constructor to initialize student details
+
+Reservation------------(separate java files)
+reservationCode (random alphanumeric string)
+student (holds a Student object)
+date
+time (7 am - 5 pm)
+duration (1-3 hours)
+status (e.g., PENDING, ACTIVE, DONE)
+
+Methods:
+Generates a random string for the reservationCode
+Getters and setters for variables
+
+Room---------------(separate java files)
+roomNumber (1 through 4)
+capacity (max capacity of 10)
+reservationQueue (a LinkedList holding active/upcoming Reservation objects for this specific room)
+
+Methods:
+Checks if the room is under capacity
+Adds a reservation to its queue
+Removes or completes a reservation from its queue
+
+LibraryManager------------(separate java files)
+rooms (a collection/array of the 4 Room objects)
+stagedReservation (temporary variable holding the reservation currently sitting in the output window for review)
+
+Methods:
+createReservation(...): Takes input from the form, creates the Student and Reservation objects, and populates the Output Window data (sets status to pending/staged).
+confirmReservationToRoom(...): Triggered when the "Done" button on the output window is clicked; takes the staged reservation, checks room capacity, and pushes it into the chosen Room's queue (updates status to active).
+
+Methods to handle viewing room queue details and passing them back to the output window when clicked.
+
+LQSGGUI---------(separate java file, eto yung kay tristan na gui file)
+refer to the pinned photo of LQS sa gc for the layout
+no logic ok? 
+just make it very pretty
+
