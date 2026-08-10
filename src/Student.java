@@ -11,12 +11,19 @@ public class Student {
     private String Name;
     private String Id;
     
-    public String getSN() {
-        return this.Name;
+    //constructor so a student MUST have these :>
+    public Student(String name, String id) {
+        this.Name = name;
+        this.Id = id;
     }
-    
-    public String getSID() {
-        return this.Id;
+
+    //getters yuh
+    public String getName() {
+        return Name;
+    }
+
+    public String getId() {
+        return Id;
     }
 }
 
