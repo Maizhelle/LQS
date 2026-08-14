@@ -1,59 +1,65 @@
+import java.util.ArrayList;
 
+public class LibraryManager {
 
-public class LibraryManager extends Jframe {
+    private ArrayList<Student> students = new ArrayList<>();
+    private ArrayList<Reservation> reservations = new ArrayList<>();
 
-  JTextField Name = new JextField();
-  JTextField id = new JTextField();
-  JTextField date = new JTextField();
-  JTextField time = new JTextField();
-  JTextField duration = new JTextField();
-  JTextField room = new JTextField();
-  JtextField output = new JTextField();
-  
-  Public LibraryManager() {
-    setTitle("Library Reservation");
-    setSize(400, 450);
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-    
-    add(new JLabel("Name;")); add(name);
-    add(new JLabel("ID:")); Add(id);
-    add(new JLabel("Time (7-17):")); add(time);
-    add(new JLabel("Duration (1-3):")); add(duration);
-    add(new Jlabel("Room:")); add(room);
-
-    JButton reserve = new JButton("Reserve");
-    add(reserve);
-    add(new JScrollPane(output));
-
-    reserve.addActionListener(e -> reserve());
-  }
-  void reserve() {
-    try {
-      Student s = new Reservation(
-        s, data.getText(),
-        Integer.parseInt(time.get()),
-        Integer.pareInt(Duration.getText())
-      );
-      
-      output.setText(
-        "=== RESERVATION ===\n" +
-        "Name: " + s.getName() + "\n" +
-        "ID: " + s.getId() + "\n" +
-        "Code: " + r.getReversationCode() + "n\" +
-        "Date: " + r.getDate() + "n\" + 
-        "Time: " + r.getTime() + ":00\n" +
-        "Duration: " + r.getDuration() + " hour(s)\n" +
-        "Room: " + room.getText() + "\n" +
-        "Status: " + r.getStatus()
-      );
-
-    } catch (Expectation e) {
-        JOptionpane.showMessageDialog(this, "Invaild input!");
+    public void addStudent(Student student) {
+        if (student != null && findStudent(student.getId()) == null)
+            students.add(student);
     }
-  }
-  public static void main(String[] args) {
-    new LibraryManager().setVisble(true);
-  }
+
+    public void addReservation(Reservation reservation) {
+        if (reservation != null) {
+            reservations.add(reservation);
+            if (findStudent(reservation.getStudent().getId()) == null)
+                students.add(reservation.getStudent());
+        }
+    }
+
+    public Student findStudent(String id) {
+        for (Student s : students)
+            if (s.getId().equalsIgnoreCase(id)) return s;
+        return null;
+    }
+
+    public Reservation findReservation(String code) {
+        for (Reservation r : reservations)
+            if (r.getReservationCode().equalsIgnoreCase(code)) return r;
+        return null;
+    }
+
+    public void updateReservationStatus(String code, String status) {
+        Reservation r = findReservation(code);
+        if (r != null) r.setStatus(status);
+    }
+
+    public void cancelReservation(String code) {
+        Reservation r = findReservation(code);
+        if (r != null) r.setStatus("cancelled");
+    }
+
+    public void displayReservations() {
+        for (Reservation r : reservations) {
+            System.out.println(
+                r.getReservationCode() + " | " +
+                r.getStudent().getName() + " | " +
+                r.getStudent().getId() + " | " +
+                r.getDate() + " | " +
+                r.getTime() + ":00 | " +
+                r.getDuration() + " hour(s) | " +
+                r.getStatus()
+            );
+        }
+    }
+
+    public int getStudentCount() {
+        return students.size();
+    }
+
+    public int getReservationCount() {
+        return reservations.size();
+    }
 }
     
