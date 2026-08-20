@@ -21,6 +21,7 @@ Java based library reservation and queue management system designed to streamlin
 * *Examples:* `feature/student-class`, `ui-integration`, `feature/room-queue`
 
 ## Contributors
-* **Ronin Perez** | Fullstack
+* **Ronin Perez** | Fullstack | Reservation, LibraryManager, Student
 * **Rus Lagoras** | Fullstack
-* **Tristan Ebonia** | Frontend
+* **Tristan Ebonia** | Frontend 
+* **Jerald Andres** | Backend | Room
