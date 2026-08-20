@@ -1,37 +1,41 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author mcija
- */
-import java.util.UUID; 
-// UUID is used to generate unique identifiers for reservations :>
+import java.util.UUID;
 
 public class Reservation {
     private String reservationCode;
-    private Student student; // this uses the student.java
+    private Student student;
     private String date;
-    private int time; //uses 24 hour format, 17 for 5pm 
-    private int duration; //1-3 hours
-    private String status; //pending, active, done
+    private int time; 
+    private int duration; 
+    private int numberOfStudents; 
+    private String status;
 
-    //constructorrrrrrr
-    public Reservation(Student student, String date, int time, int duration){
+    public Reservation(Student student, String date, int time, int duration, int numberOfStudents) {
         this.student = student;
         this.date = date;
         setTime(time);
         setDuration(duration);
+        setNumberOfStudents(numberOfStudents);
         this.reservationCode = generateRandomCode();
-        this.status = "pending"; //cause when reservation is made its in pending, duh?
+        this.status = "pending";
     }
 
-    //lowk dont 100% understand this yet, I js searched it up </3
     private String generateRandomCode() {
         return UUID.randomUUID().toString().substring(0,8).toUpperCase();
     }
+
+    // Getters and Setters
+    public int getNumberOfStudents() {
+        return numberOfStudents;
+    }
+
+    public void setNumberOfStudents(int numberOfStudents) {
+        if (numberOfStudents >= 1 && numberOfStudents <= 10) {
+            this.numberOfStudents = numberOfStudents;
+        } else {
+            throw new IllegalArgumentException("Headcount must be between 1 and 10.");
+        }
+    }
+
 
     //GETTERSSS N SETTERS
     public String getReservationCode() {

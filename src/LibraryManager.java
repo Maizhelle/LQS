@@ -1,21 +1,21 @@
 public class LibraryManager {
     private Room[] rooms;
-    private Reservation[] stagedreservation; //temp variable
+    private Reservation stagedReservation; 
 
     // constructor for 4 rooms
     public LibraryManager(){
-        room = new Room[4]
+        rooms = new Room[4]; 
         for (int i = 0; i < rooms.length; i++) {
             rooms[i] = new Room(i + 1);
         }
         stagedReservation = null;
     }
 
-    // make reservation, set to pending 
-    public void createReservation(Student Id, String date, int time, int duration) {
-        Student student = new Student(Name, Id);
-        this.stagedreservation = new Reservation(student, date, time, duration);
-        this.stagedreservation.setStatus("PENDING");
+
+    public void createReservation(String studentName, String studentId, String date, int time, int duration, int numberOfStudents) {
+        Student student = new Student(studentName, studentId);
+        this.stagedReservation = new Reservation(student, date, time, duration, numberOfStudents);
+        this.stagedReservation.setStatus("PENDING");
     }
 
     // trig when done is clicked 
@@ -25,11 +25,11 @@ public class LibraryManager {
         }
 
         if (roomNumber >= 1 && roomNumber <= rooms.length) {
-            Room  targetroom = rooms[roomNumber - 1];
+            Room targetroom = rooms[roomNumber - 1]; 
 
-            if (targetRoom.isUnderCapacity()) {
+            if (targetroom.isUnderCapacity(stagedReservation.getNumberOfStudents())) {
                 stagedReservation.setStatus("ACTIVE");
-                stagedRoom.addReservation(stagedReservavtion);
+                targetroom.addReservation(stagedReservation); 
                 stagedReservation = null;
                 return true;
             }
@@ -37,7 +37,7 @@ public class LibraryManager {
         return false;
     }
 
-    //geetterereasdsad
+    // getters
     public Reservation getStagedReservation() {
         return stagedReservation;
     }

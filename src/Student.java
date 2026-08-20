@@ -12,9 +12,9 @@ public class Student {
     private String Id;
     
     //constructor so a student MUST have these :>
-    public Student(String name, String id) {
-        this.Name = name;
-        this.Id = id;
+    public Student(String Name, String Id) {
+        this.Name = Name;
+        this.Id = Id;
     }
 
     //getters yuh
