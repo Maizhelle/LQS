@@ -23,5 +23,5 @@ Java based library reservation and queue management system designed to streamlin
 ## Contributors
 * **Ronin Perez** | Fullstack | Reservation, LibraryManager, Student
 * **Rus Lagoras** | Fullstack
-* **Tristan Ebonia** | Frontend 
+* **Tristan Ebonia** | Frontend | RoomReservationGUI
 * **Jerald Andres** | Backend | Room
