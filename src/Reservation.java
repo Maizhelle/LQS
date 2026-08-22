@@ -1,3 +1,8 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.UUID;
 
 public class Reservation {
@@ -11,7 +16,7 @@ public class Reservation {
 
     public Reservation(Student student, String date, int time, int duration, int numberOfStudents) {
         this.student = student;
-        this.date = date;
+        setDate(date);
         setTime(time);
         setDuration(duration);
         setNumberOfStudents(numberOfStudents);
@@ -58,8 +63,33 @@ public class Reservation {
         return date;
     }
 
+    public boolean isScheduledForToday() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+        return LocalDate.parse(date, formatter).equals(LocalDate.now());
+    }
+
+    public LocalDateTime getScheduledStart() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+        return LocalDate.parse(date, formatter).atTime(time, 0);
+    }
+
     public void setDate(String date) {
-        this.date = date;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+        try {
+            LocalDate parsedDate = LocalDate.parse(date, formatter);
+            if (parsedDate.isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException("Date cannot be in the past.");
+            }
+            this.date = date;
+            if (time >= 7 && time <= 17) {
+                validateStartTime();
+            }
+        } catch (DateTimeParseException | NullPointerException e) {
+            throw new IllegalArgumentException("Date must use the format MM/DD/YYYY and be a valid calendar date.");
+        }
     }
 
     public int getTime() {
@@ -70,8 +100,19 @@ public class Reservation {
     public void setTime(int time){
         if (time >=7 && time <= 17){
             this.time = time;
+            validateStartTime();
         } else {
             throw new IllegalArgumentException("Time must be between 7 AM and 5PM.");
+        }
+    }
+
+    private void validateStartTime() {
+        LocalDate scheduledDate = LocalDate.parse(date,
+                DateTimeFormatter.ofPattern("MM/dd/uuuu")
+                        .withResolverStyle(ResolverStyle.STRICT));
+        LocalDateTime scheduledStart = scheduledDate.atTime(time, 0);
+        if (!scheduledStart.isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Start time must be later than the current time.");
         }
     }
 

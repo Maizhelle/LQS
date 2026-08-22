@@ -2,9 +2,9 @@ public class LibraryManager {
     private Room[] rooms;
     private Reservation stagedReservation; 
 
-    // constructor for 4 rooms
+    // constructor for 5 rooms
     public LibraryManager(){
-        rooms = new Room[4]; 
+        rooms = new Room[5]; 
         for (int i = 0; i < rooms.length; i++) {
             rooms[i] = new Room(i + 1);
         }
@@ -28,13 +28,28 @@ public class LibraryManager {
             Room targetroom = rooms[roomNumber - 1]; 
 
             if (targetroom.isUnderCapacity(stagedReservation.getNumberOfStudents())) {
-                stagedReservation.setStatus("ACTIVE");
+                boolean canActivate = targetroom.getActiveReservation() == null
+                        && stagedReservation.isScheduledForToday();
+                stagedReservation.setStatus(canActivate ? "ACTIVE" : "QUEUED");
                 targetroom.addReservation(stagedReservation); 
                 stagedReservation = null;
                 return true;
             }
         }
         return false;
+    }
+
+    public Reservation advanceRoomQueue(int roomNumber) {
+        Room room = getRoom(roomNumber);
+        if (room == null) {
+            return null;
+        }
+
+        Reservation activeReservation = room.getActiveReservation();
+        if (activeReservation != null) {
+            activeReservation.setStatus("COMPLETED");
+        }
+        return room.activateNextReservation();
     }
 
     // getters
