@@ -1,5 +1,7 @@
 # Compiled class files from java yes
 *.class
+reservations.dat
+reservations.dat.tmp
 
 # Package files
 *.jar

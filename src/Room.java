@@ -1,6 +1,11 @@
 import java.util.LinkedList;
+import java.util.Collections;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
-public class Room {
+public class Room implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int roomNumber;
     private final int capacity = 10;
     private LinkedList<Reservation> reservationQueue;
@@ -35,7 +40,8 @@ public class Room {
         }
 
         for (Reservation reservation : reservationQueue) {
-            if ("QUEUED".equals(reservation.getStatus()) && reservation.isScheduledForToday()) {
+                if ("QUEUED".equals(reservation.getStatus())
+                    && !reservation.getScheduledStart().isAfter(LocalDateTime.now())) {
                 reservation.setStatus("ACTIVE");
                 return reservation;
             }
@@ -76,7 +82,7 @@ public class Room {
         return capacity;
     }
 
-    public LinkedList<Reservation> getReservationQueue() {
-        return reservationQueue;
+    public List<Reservation> getReservationQueue() {
+        return Collections.unmodifiableList(reservationQueue);
     }
 }

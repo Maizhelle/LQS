@@ -12,8 +12,14 @@ public class RoomReservationGUI extends javax.swing.JFrame {
     private javax.swing.JPanel pnlStudentDetails;
     private javax.swing.JLabel lblStudentName;
     private java.awt.TextField txtStudentName;
+    private javax.swing.JLabel lblReserverType;
+    private javax.swing.JComboBox<String> cmbReserverType;
     private javax.swing.JLabel lblStudentID;
     private java.awt.TextField txtStudentID;
+    private javax.swing.JLabel lblDepartment;
+    private java.awt.TextField txtDepartment;
+    private javax.swing.JLabel lblActivity;
+    private java.awt.TextField txtActivity;
     private javax.swing.JLabel lblDate;
     private java.awt.TextField txtDate;
     private javax.swing.JLabel lblStartTime;
@@ -31,6 +37,14 @@ public class RoomReservationGUI extends javax.swing.JFrame {
     private javax.swing.JLabel lblOutputReservationCode;
     private javax.swing.JLabel lblOutputStudentNameTitle;
     private javax.swing.JLabel lblOutputStudentName;
+    private javax.swing.JLabel lblOutputReserverTypeTitle;
+    private javax.swing.JLabel lblOutputReserverType;
+    private javax.swing.JLabel lblOutputStudentIDTitle;
+    private javax.swing.JLabel lblOutputStudentID;
+    private javax.swing.JLabel lblOutputDepartmentTitle;
+    private javax.swing.JLabel lblOutputDepartment;
+    private javax.swing.JLabel lblOutputActivityTitle;
+    private javax.swing.JLabel lblOutputActivity;
     private javax.swing.JLabel lblOutputDateTitle;
     private javax.swing.JLabel lblOutputDate;
     private javax.swing.JLabel lblTime;
@@ -41,12 +55,17 @@ public class RoomReservationGUI extends javax.swing.JFrame {
     private javax.swing.JLabel lblOutputHeadcount;
     private javax.swing.JLabel lblOutputStatusTitle;
     private javax.swing.JLabel lblOutputStatus;
+    private javax.swing.JLabel lblOutputLibrarianTitle;
+    private javax.swing.JLabel lblOutputLibrarian;
+    private javax.swing.JLabel lblLibrarianName;
+    private java.awt.TextField txtLibrarianName;
     private javax.swing.JButton btnDone;
+    private javax.swing.JButton btnRemoveReservation;
 
     private javax.swing.JPanel pnlRoomsContainer;
     private javax.swing.JScrollPane scrollRooms;
+    private javax.swing.JFrame studentDetailsWindow;
     
-    // ROOM 1
     private javax.swing.JPanel pnlRoom1Outer;
     private javax.swing.JLabel lblRoom1Title;
     private javax.swing.JButton btnRemoveRoom1;
@@ -61,7 +80,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
     private javax.swing.JLabel lblRoom1TimerTitle;
     private javax.swing.JLabel lblRoom1Timer;
 
-    // ROOM 2
     private javax.swing.JPanel pnlRoom2Outer;
     private javax.swing.JLabel lblRoom2Title;
     private javax.swing.JButton btnRemoveRoom2;
@@ -76,7 +94,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
     private javax.swing.JLabel lblRoom2TimerTitle;
     private javax.swing.JLabel lblRoom2Timer;
 
-    // ROOM 3
     private javax.swing.JPanel pnlRoom3Outer;
     private javax.swing.JLabel lblRoom3Title;
     private javax.swing.JButton btnRemoveRoom3;
@@ -115,11 +132,15 @@ public class RoomReservationGUI extends javax.swing.JFrame {
     private javax.swing.JLabel lblRoom5Timer;
     private final Map<Integer, Long> roomEndTimes = new HashMap<>();
     private javax.swing.Timer countdownTimer;
+    private Reservation selectedReservation;
+    private int selectedReservationRoom;
 
     public RoomReservationGUI() {
         initComponents();
 
         libraryManager = new LibraryManager();
+        openStudentDetailsWindow();
+        pack();
         initControllerActions();
         countdownTimer = new javax.swing.Timer(1000, e -> updateRoomTimers());
         countdownTimer.start();
@@ -128,6 +149,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         addQueueClickHandler(lblRoom3Code, 3);
         addQueueClickHandler(lblRoom4Code, 4);
         addQueueClickHandler(lblRoom5Code, 5);
+        refreshRoomDisplays();
     }
 
     private void initComponents() {
@@ -136,8 +158,14 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         pnlStudentDetails = new javax.swing.JPanel();
         lblStudentName = new javax.swing.JLabel();
         txtStudentName = new java.awt.TextField();
+        lblReserverType = new javax.swing.JLabel();
+        cmbReserverType = new javax.swing.JComboBox<>();
         lblStudentID = new javax.swing.JLabel();
         txtStudentID = new java.awt.TextField();
+        lblDepartment = new javax.swing.JLabel();
+        txtDepartment = new java.awt.TextField();
+        lblActivity = new javax.swing.JLabel();
+        txtActivity = new java.awt.TextField();
         lblDate = new javax.swing.JLabel();
         txtDate = new java.awt.TextField();
         lblStartTime = new javax.swing.JLabel();
@@ -155,6 +183,14 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         lblOutputReservationCode = new javax.swing.JLabel();
         lblOutputStudentNameTitle = new javax.swing.JLabel();
         lblOutputStudentName = new javax.swing.JLabel();
+        lblOutputReserverTypeTitle = new javax.swing.JLabel();
+        lblOutputReserverType = new javax.swing.JLabel();
+        lblOutputStudentIDTitle = new javax.swing.JLabel();
+        lblOutputStudentID = new javax.swing.JLabel();
+        lblOutputDepartmentTitle = new javax.swing.JLabel();
+        lblOutputDepartment = new javax.swing.JLabel();
+        lblOutputActivityTitle = new javax.swing.JLabel();
+        lblOutputActivity = new javax.swing.JLabel();
         lblOutputDateTitle = new javax.swing.JLabel();
         lblOutputDate = new javax.swing.JLabel();
         lblTime = new javax.swing.JLabel();
@@ -165,11 +201,15 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         lblOutputHeadcount = new javax.swing.JLabel();
         lblOutputStatusTitle = new javax.swing.JLabel();
         lblOutputStatus = new javax.swing.JLabel();
+        lblOutputLibrarianTitle = new javax.swing.JLabel();
+        lblOutputLibrarian = new javax.swing.JLabel();
+        lblLibrarianName = new javax.swing.JLabel();
+        txtLibrarianName = new java.awt.TextField();
         btnDone = new javax.swing.JButton();
+        btnRemoveReservation = new javax.swing.JButton();
 
         pnlRoomsContainer = new javax.swing.JPanel();
         
-        // ROOM 1 with ScrollPane
         pnlRoom1Outer = new javax.swing.JPanel();
         lblRoom1Title = new javax.swing.JLabel();
         btnRemoveRoom1 = new javax.swing.JButton();
@@ -184,7 +224,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         lblRoom1TimerTitle = new javax.swing.JLabel();
         lblRoom1Timer = new javax.swing.JLabel();
 
-        // ROOM 2 with ScrollPane
         pnlRoom2Outer = new javax.swing.JPanel();
         lblRoom2Title = new javax.swing.JLabel();
         btnRemoveRoom2 = new javax.swing.JButton();
@@ -199,7 +238,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         lblRoom2TimerTitle = new javax.swing.JLabel();
         lblRoom2Timer = new javax.swing.JLabel();
 
-        // ROOM 3 with ScrollPane
         pnlRoom3Outer = new javax.swing.JPanel();
         lblRoom3Title = new javax.swing.JLabel();
         btnRemoveRoom3 = new javax.swing.JButton();
@@ -240,14 +278,24 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ROOM RESERVATION SYSTEM");
 
-        // --- STUDENT DETAILS PANEL ---
-        pnlStudentDetails.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Student Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 1, 20)));
+        pnlStudentDetails.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Reserver Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 1, 20)));
+
+        lblReserverType.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblReserverType.setText("Reserving Group");
+
+        cmbReserverType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "STUDENT", "FACULTY", "ASP" }));
 
         lblStudentName.setFont(new java.awt.Font("Segoe UI", 1, 14));
-        lblStudentName.setText("Student Name");
+        lblStudentName.setText("Name (Surname, First Name, M.I.)");
 
         lblStudentID.setFont(new java.awt.Font("Segoe UI", 1, 14));
-        lblStudentID.setText("Student ID");
+        lblStudentID.setText("ID (e.g., 2026-1234567)");
+
+        lblDepartment.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblDepartment.setText("Department / College");
+
+        lblActivity.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblActivity.setText("Room Activity / Purpose");
 
         lblDate.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lblDate.setText("Date (MM/DD/YYYY)");
@@ -263,7 +311,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         cmbDuration.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 Hour", "2 Hours", "3 Hours" }));
 
         lblHeadcount.setFont(new java.awt.Font("Segoe UI", 1, 14));
-        lblHeadcount.setText("Number of Students");
+        lblHeadcount.setText("Number of LRC Users");
 
         txtHeadcount.setText("1");
 
@@ -284,8 +332,11 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             .addGroup(pnlStudentDetailsLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblReserverType)
                     .addComponent(lblStudentName)
                     .addComponent(lblStudentID)
+                    .addComponent(lblDepartment)
+                    .addComponent(lblActivity)
                     .addComponent(lblDate)
                     .addComponent(lblStartTime)
                     .addComponent(lblDuration)
@@ -293,8 +344,11 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                     .addComponent(lblRoomSelection))
                 .addGap(30, 30, 30)
                 .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cmbReserverType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtStudentName, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(txtStudentID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtDepartment, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtActivity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cmbStartTime, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cmbDuration, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -310,6 +364,10 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlStudentDetailsLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
+                .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblReserverType)
+                    .addComponent(cmbReserverType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
                 .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblStudentName)
                     .addComponent(txtStudentName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -317,6 +375,14 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblStudentID)
                     .addComponent(txtStudentID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblDepartment)
+                    .addComponent(txtDepartment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblActivity)
+                    .addComponent(txtActivity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
                 .addGroup(pnlStudentDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblDate)
@@ -342,7 +408,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        // --- RESERVATION DETAILS PANEL ---
         pnlReservationDetails.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Reservation Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 1, 20)));
 
         lblReservationCodeTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
@@ -353,9 +418,29 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         lblOutputReservationCode.setText("---");
 
         lblOutputStudentNameTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
-        lblOutputStudentNameTitle.setText("Student Name");
+        lblOutputStudentNameTitle.setText("Name");
 
         lblOutputStudentName.setText("---");
+
+        lblOutputReserverTypeTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblOutputReserverTypeTitle.setText("Reserving Group");
+
+        lblOutputReserverType.setText("---");
+
+        lblOutputStudentIDTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblOutputStudentIDTitle.setText("ID");
+
+        lblOutputStudentID.setText("---");
+
+        lblOutputDepartmentTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblOutputDepartmentTitle.setText("Department / College");
+
+        lblOutputDepartment.setText("---");
+
+        lblOutputActivityTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblOutputActivityTitle.setText("Room Activity / Purpose");
+
+        lblOutputActivity.setText("---");
 
         lblOutputDateTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lblOutputDateTitle.setText("Date");
@@ -373,7 +458,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         lblOutputDuration.setText("---");
 
         lblOutputHeadcountTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
-        lblOutputHeadcountTitle.setText("Students");
+        lblOutputHeadcountTitle.setText("LRC Users");
 
         lblOutputHeadcount.setText("---");
 
@@ -382,10 +467,23 @@ public class RoomReservationGUI extends javax.swing.JFrame {
 
         lblOutputStatus.setText("---");
 
+        lblOutputLibrarianTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblOutputLibrarianTitle.setText("Checked In By");
+
+        lblOutputLibrarian.setText("---");
+
+        lblLibrarianName.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        lblLibrarianName.setText("Librarian Name");
+
         btnDone.setBackground(new java.awt.Color(0, 153, 0));
         btnDone.setFont(new java.awt.Font("Segoe UI", 1, 16));
         btnDone.setForeground(new java.awt.Color(255, 255, 255));
         btnDone.setText("DONE");
+
+        btnRemoveReservation.setBackground(new java.awt.Color(153, 0, 0));
+        btnRemoveReservation.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        btnRemoveReservation.setForeground(new java.awt.Color(255, 255, 255));
+        btnRemoveReservation.setText("REMOVE RESERVATION");
 
         javax.swing.GroupLayout pnlReservationDetailsLayout = new javax.swing.GroupLayout(pnlReservationDetails);
         pnlReservationDetails.setLayout(pnlReservationDetailsLayout);
@@ -396,21 +494,37 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblReservationCodeTitle)
                     .addComponent(lblOutputStudentNameTitle)
+                    .addComponent(lblOutputReserverTypeTitle)
+                    .addComponent(lblOutputStudentIDTitle)
+                    .addComponent(lblOutputDepartmentTitle)
+                    .addComponent(lblOutputActivityTitle)
                     .addComponent(lblOutputDateTitle)
                     .addComponent(lblTime)
                     .addComponent(lblOutputDurationTitle)
                     .addComponent(lblOutputHeadcountTitle)
-                    .addComponent(lblOutputStatusTitle))
+                    .addComponent(lblOutputStatusTitle)
+                    .addComponent(lblOutputLibrarianTitle)
+                    .addComponent(lblLibrarianName))
                 .addGap(30, 30, 30)
                 .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblOutputReservationCode, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(lblOutputStudentName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblOutputReserverType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblOutputStudentID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblOutputDepartment, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblOutputActivity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblOutputDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblOutputTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblOutputDuration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblOutputHeadcount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblOutputStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblOutputStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblOutputLibrarian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtLibrarianName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(25, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlReservationDetailsLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnRemoveReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(90, 90, 90))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlReservationDetailsLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnDone, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -427,6 +541,22 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblOutputStudentNameTitle)
                     .addComponent(lblOutputStudentName))
+                .addGap(14, 14, 14)
+                .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblOutputReserverTypeTitle)
+                    .addComponent(lblOutputReserverType))
+                .addGap(14, 14, 14)
+                .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblOutputStudentIDTitle)
+                    .addComponent(lblOutputStudentID))
+                .addGap(14, 14, 14)
+                .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblOutputDepartmentTitle)
+                    .addComponent(lblOutputDepartment))
+                .addGap(14, 14, 14)
+                .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblOutputActivityTitle)
+                    .addComponent(lblOutputActivity))
                 .addGap(14, 14, 14)
                 .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblOutputDateTitle)
@@ -448,11 +578,20 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                     .addComponent(lblOutputStatusTitle)
                     .addComponent(lblOutputStatus))
                 .addGap(18, 18, 18)
+                .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblOutputLibrarianTitle)
+                    .addComponent(lblOutputLibrarian))
+                .addGap(14, 14, 14)
+                .addGroup(pnlReservationDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblLibrarianName)
+                    .addComponent(txtLibrarianName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(btnRemoveReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
                 .addComponent(btnDone, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        // --- LEFT COLUMN WRAPPER ---
         javax.swing.GroupLayout pnlLeftColumnLayout = new javax.swing.GroupLayout(pnlLeftColumn);
         pnlLeftColumn.setLayout(pnlLeftColumnLayout);
         pnlLeftColumnLayout.setHorizontalGroup(
@@ -460,7 +599,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             .addGroup(pnlLeftColumnLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlLeftColumnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlStudentDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlReservationDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -468,16 +606,12 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             pnlLeftColumnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlLeftColumnLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlStudentDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlReservationDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        // --- ROOMS PANEL CONTAINER ---
         pnlRoomsContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Rooms", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 1, 24)));
 
-        // --- ROOM 1 (Initialized with "---") ---
         pnlRoom1Outer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 18)));
 
         lblRoom1Title.setFont(new java.awt.Font("Segoe UI", 1, 20));
@@ -490,6 +624,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         btnRemoveRoom1.setText("-");
 
         scrollRoom1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollRoom1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         lblRoom1NumberTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lblRoom1NumberTitle.setText("Room #:");
@@ -521,9 +656,9 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addGroup(pnlRoom1ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblRoom1NumberTitle)
-                    .addComponent(lblRoom1Reservation)
                     .addComponent(lblRoom1CheckInTitle)
-                    .addComponent(lblRoom1TimerTitle))
+                    .addComponent(lblRoom1TimerTitle)
+                    .addComponent(lblRoom1Reservation))
                 .addGap(86, 86, 86)
                 .addGroup(pnlRoom1ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblRoom1Timer)
@@ -541,16 +676,16 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                     .addComponent(lblRoom1Number))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom1ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRoom1Reservation)
-                    .addComponent(lblRoom1Code))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRoom1ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom1CheckInTitle)
                     .addComponent(lblRoom1CheckIn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom1ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom1TimerTitle)
                     .addComponent(lblRoom1Timer))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlRoom1ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblRoom1Reservation)
+                    .addComponent(lblRoom1Code))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -581,7 +716,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        // --- ROOM 2 (Initialized with "---") ---
         pnlRoom2Outer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 1, 18)));
 
         lblRoom2Title.setFont(new java.awt.Font("Segoe UI", 1, 20));
@@ -594,6 +728,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         btnRemoveRoom2.setText("-");
 
         scrollRoom2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollRoom2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         lblRoom2NumberTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lblRoom2NumberTitle.setText("Room #:");
@@ -625,9 +760,9 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addGap(14, 14, 14)
                 .addGroup(pnlRoom2ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblRoom2NumberTitle)
-                    .addComponent(lblRoom2Reservation)
                     .addComponent(lblRoom2CheckInTitle)
-                    .addComponent(lblRoom2TimerTitle))
+                    .addComponent(lblRoom2TimerTitle)
+                    .addComponent(lblRoom2Reservation))
                 .addGap(86, 86, 86)
                 .addGroup(pnlRoom2ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblRoom2Timer)
@@ -645,16 +780,16 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                     .addComponent(lblRoom2Number))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom2ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRoom2Reservation)
-                    .addComponent(lblRoom2Code))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRoom2ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom2CheckInTitle)
                     .addComponent(lblRoom2CheckIn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom2ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom2TimerTitle)
                     .addComponent(lblRoom2Timer))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlRoom2ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblRoom2Reservation)
+                    .addComponent(lblRoom2Code))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -685,7 +820,6 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        // --- ROOM 3 (Initialized with "---") ---
         pnlRoom3Outer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 1, 18)));
 
         lblRoom3Title.setFont(new java.awt.Font("Segoe UI", 1, 20));
@@ -698,6 +832,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         btnRemoveRoom3.setText("-");
 
         scrollRoom3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollRoom3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         lblRoom3NumberTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lblRoom3NumberTitle.setText("Room #:");
@@ -729,9 +864,9 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(pnlRoom3ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblRoom3NumberTitle)
-                    .addComponent(lblRoom3Reservation)
                     .addComponent(lblRoom3CheckInTitle)
-                    .addComponent(lblRoom3TimerTitle))
+                    .addComponent(lblRoom3TimerTitle)
+                    .addComponent(lblRoom3Reservation))
                 .addGap(85, 85, 85)
                 .addGroup(pnlRoom3ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblRoom3Timer)
@@ -749,16 +884,16 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                     .addComponent(lblRoom3Number))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom3ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRoom3Reservation)
-                    .addComponent(lblRoom3Code))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRoom3ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom3CheckInTitle)
                     .addComponent(lblRoom3CheckIn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom3ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom3TimerTitle)
                     .addComponent(lblRoom3Timer))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlRoom3ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblRoom3Reservation)
+                    .addComponent(lblRoom3Code))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -798,6 +933,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         btnRemoveRoom4.setForeground(new java.awt.Color(255, 255, 255));
         btnRemoveRoom4.setText("-");
         scrollRoom4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollRoom4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblRoom4Reservation.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lblRoom4Reservation.setText("Reservation Code:");
         lblRoom4CheckInTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
@@ -830,16 +966,16 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             .addGroup(pnlRoom4ContentLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlRoom4ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRoom4Reservation)
-                    .addComponent(lblRoom4Code))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRoom4ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom4CheckInTitle)
                     .addComponent(lblRoom4CheckIn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom4ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom4TimerTitle)
                     .addComponent(lblRoom4Timer))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlRoom4ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblRoom4Reservation)
+                    .addComponent(lblRoom4Code))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -875,6 +1011,7 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         lblRoom5Title.setForeground(new java.awt.Color(204, 153, 0));
         lblRoom5Title.setText("MULTIMEDIA ROOM");
         scrollRoom5.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollRoom5.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblRoom5Reservation.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lblRoom5Reservation.setText("Reservation Code:");
         lblRoom5CheckInTitle.setFont(new java.awt.Font("Segoe UI", 1, 14));
@@ -907,16 +1044,16 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             .addGroup(pnlRoom5ContentLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlRoom5ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRoom5Reservation)
-                    .addComponent(lblRoom5Code))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRoom5ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom5CheckInTitle)
                     .addComponent(lblRoom5CheckIn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRoom5ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRoom5TimerTitle)
                     .addComponent(lblRoom5Timer))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlRoom5ContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblRoom5Reservation)
+                    .addComponent(lblRoom5Code))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         scrollRoom5.setViewportView(pnlRoom5Content);
@@ -976,12 +1113,11 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-            scrollRooms = new javax.swing.JScrollPane(pnlRoomsContainer);
-            scrollRooms.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            scrollRooms.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            scrollRooms.setPreferredSize(new java.awt.Dimension(400, 600));
+        scrollRooms = new javax.swing.JScrollPane(pnlRoomsContainer);
+        scrollRooms.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollRooms.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollRooms.setPreferredSize(new java.awt.Dimension(400, 600));
 
-        // --- MAIN FRAME LAYOUT ---
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1006,15 +1142,26 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         pack();
     }
 
-    // --- Public Getters for Backend Data Control ---
+    private void openStudentDetailsWindow() {
+        studentDetailsWindow = new javax.swing.JFrame("Student Details");
+        studentDetailsWindow.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        studentDetailsWindow.setContentPane(pnlStudentDetails);
+        studentDetailsWindow.setResizable(false);
+        studentDetailsWindow.pack();
+        studentDetailsWindow.setLocation(20, 40);
+        studentDetailsWindow.setVisible(true);
+    }
+
     public JLabel getLblOutputReservationCode() { return lblOutputReservationCode; }
     public JLabel getLblOutputStudentName() { return lblOutputStudentName; }
+    public JLabel getLblOutputReserverType() { return lblOutputReserverType; }
+    public JLabel getLblOutputStudentID() { return lblOutputStudentID; }
     public JLabel getLblOutputDate() { return lblOutputDate; }
     public JLabel getLblOutputTime() { return lblOutputTime; }
     public JLabel getLblOutputDuration() { return lblOutputDuration; }
     public JLabel getLblOutputStatus() { return lblOutputStatus; }
+    public JLabel getLblOutputLibrarian() { return lblOutputLibrarian; }
     
-    // Room Getters
     public JLabel getLblRoom1Title() { return lblRoom1Title; }
     public JLabel getLblRoom1Number() { return lblRoom1Number; }
     public JLabel getLblRoom1Code() { return lblRoom1Code; }
@@ -1048,26 +1195,34 @@ public class RoomReservationGUI extends javax.swing.JFrame {
 
     public JButton getBtnReserve() { return btnReserve; }
     public JButton getBtnDone() { return btnDone; }
+        public JButton getBtnRemoveReservation() { return btnRemoveReservation; }
+    public java.awt.TextField getTxtLibrarianName() { return txtLibrarianName; }
     public java.awt.TextField getTxtStudentName() { return txtStudentName; }
+    public JComboBox<String> getCmbReserverType() { return cmbReserverType; }
     public java.awt.TextField getTxtStudentID() { return txtStudentID; }
+    public java.awt.TextField getTxtDepartment() { return txtDepartment; }
+    public java.awt.TextField getTxtActivity() { return txtActivity; }
     public java.awt.TextField getTxtDate() { return txtDate; }
     public JComboBox<String> getCmbStartTime() { return cmbStartTime; }
     public JComboBox<String> getCmbDuration() { return cmbDuration; }
 
     private void initControllerActions() {
-        // 1. RESERVE BUTTON ACTION
         btnReserve.addActionListener(e -> {
             try {
                 String name = txtStudentName.getText().trim();
+                String reserverType = cmbReserverType.getSelectedItem().toString();
                 String id = txtStudentID.getText().trim();
+                String department = txtDepartment.getText().trim();
+                String activity = txtActivity.getText().trim();
                 String date = txtDate.getText().trim();
                 
                 int startTimeInt = parseStartTime(cmbStartTime.getSelectedItem().toString());
+                int startMinuteInt = parseStartMinute(cmbStartTime.getSelectedItem().toString());
                 int durationInt = parseDuration(cmbDuration.getSelectedItem().toString());
                 int headcount = Integer.parseInt(txtHeadcount.getText().trim());
 
-                // Call backend manager
-                libraryManager.createReservation(name, id, date, startTimeInt, durationInt, headcount);
+                libraryManager.createReservation(name, id, department, activity, date,
+                    startTimeInt, startMinuteInt, durationInt, headcount, reserverType);
                 Reservation staged = libraryManager.getStagedReservation();
 
                 if (staged != null) {
@@ -1080,34 +1235,82 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             }
         });
 
-        // 2. DONE BUTTON ACTION (Confirms staged reservation into Room 1 as an example)
         btnDone.addActionListener(e -> {
-            int targetRoomNum = cmbRoomSelection.getSelectedIndex() + 1;
-            boolean success = libraryManager.confirmReservationToRoom(targetRoomNum);
+            try {
+                int targetRoomNum = cmbRoomSelection.getSelectedIndex() + 1;
+                boolean success = libraryManager.confirmReservationToRoom(targetRoomNum,
+                        txtLibrarianName.getText());
 
-            if (success) {
-                Room r = libraryManager.getRoom(targetRoomNum);
-                Reservation activeRes = r.getActiveReservation();
+                if (success) {
+                    Room r = libraryManager.getRoom(targetRoomNum);
+                    Reservation activeRes = r.getActiveReservation();
 
-                updateRoomDisplay(r, activeRes);
+                    updateRoomDisplay(r, activeRes);
+                    clearReservationDetails();
+
+                    java.util.List<Reservation> reservations = r.getReservationQueue();
+                    Reservation addedReservation = reservations.get(reservations.size() - 1);
+                    String action = "ACTIVE".equals(addedReservation.getStatus())
+                        ? "checked into" : "added to the queue for";
+                    JOptionPane.showMessageDialog(this, "Reservation successfully " + action
+                        + " Room " + targetRoomNum + "!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to confirm reservation. Room might be over capacity or no reservation is staged.", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Reservation unavailable", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        btnRemoveReservation.addActionListener(e -> {
+            if (selectedReservation == null) {
+                JOptionPane.showMessageDialog(this, "Click a reservation in a room queue first.",
+                        "No reservation selected", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            boolean wasActive = "ACTIVE".equals(selectedReservation.getStatus());
+            Room room = libraryManager.getRoom(selectedReservationRoom);
+            if (libraryManager.removeReservation(selectedReservationRoom, selectedReservation)) {
+                if (wasActive) {
+                    roomEndTimes.remove(selectedReservationRoom);
+                }
+                updateRoomDisplay(room, room.getActiveReservation());
                 clearReservationDetails();
-
-                Reservation addedReservation = r.getReservationQueue().getLast();
-                String action = "ACTIVE".equals(addedReservation.getStatus())
-                    ? "checked into" : "added to the queue for";
-                JOptionPane.showMessageDialog(this, "Reservation successfully " + action
-                    + " Room " + targetRoomNum + "!");
+                selectedReservation = null;
+                selectedReservationRoom = 0;
+                JOptionPane.showMessageDialog(this, "Reservation removed from Room "
+                        + room.getRoomNumber() + ".");
             } else {
-                JOptionPane.showMessageDialog(this, "Failed to confirm reservation. Room might be over capacity or no reservation is staged.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "That reservation is no longer in the room queue.",
+                        "Removal failed", JOptionPane.WARNING_MESSAGE);
             }
         });
     }
 
     private void showReservationDetails(Reservation reservation) {
+        selectedReservation = null;
+        selectedReservationRoom = 0;
+        displayReservationDetails(reservation);
+    }
+
+    private void showQueuedReservationDetails(Reservation reservation, int roomNumber) {
+        selectedReservation = reservation;
+        selectedReservationRoom = roomNumber;
+        displayReservationDetails(reservation);
+    }
+
+    private void displayReservationDetails(Reservation reservation) {
         lblOutputReservationCode.setText(reservation.getReservationCode());
         lblOutputStudentName.setText(reservation.getStudent().getName());
+        lblOutputReserverType.setText(reservation.getReserverType());
+        lblOutputStudentID.setText(reservation.getStudent().getId());
+        lblOutputDepartment.setText(reservation.getStudent().getDepartment());
+        lblOutputActivity.setText(reservation.getActivity());
+        lblOutputLibrarian.setText(reservation.getLibrarianName() == null
+            ? "---" : reservation.getLibrarianName());
         lblOutputDate.setText(reservation.getDate());
-        lblOutputTime.setText(formatTime(reservation.getTime()));
+        lblOutputTime.setText(formatTime(reservation.getTime(), reservation.getMinute()));
         lblOutputDuration.setText(reservation.getDuration() + " Hour(s)");
         lblOutputHeadcount.setText(String.valueOf(reservation.getNumberOfStudents()));
         lblOutputStatus.setText(reservation.getStatus().toUpperCase());
@@ -1126,28 +1329,31 @@ public class RoomReservationGUI extends javax.swing.JFrame {
                 int lineHeight = queueLabel.getFontMetrics(queueLabel.getFont()).getHeight();
                 int selectedIndex = Math.max(0, event.getY() / lineHeight);
                 if (selectedIndex < room.getReservationQueue().size()) {
-                    showReservationDetails(room.getReservationQueue().get(selectedIndex));
+                    showQueuedReservationDetails(room.getReservationQueue().get(selectedIndex), roomNumber);
                 }
             }
         });
     }
 
-    private String formatTime(int hour) {
+    private String formatTime(int hour, int minute) {
+        String minuteText = String.format("%02d", minute);
         if (hour == 12) {
-            return "12:00 PM";
+            return "12:" + minuteText + " PM";
         }
         if (hour > 12) {
-            return (hour - 12) + ":00 PM";
+            return (hour - 12) + ":" + minuteText + " PM";
         }
-        return hour + ":00 AM";
+        return hour + ":" + minuteText + " AM";
     }
 
     private void clearReservationDetails() {
         for (JLabel label : new JLabel[] { lblOutputReservationCode, lblOutputStudentName,
-                lblOutputDate, lblOutputTime, lblOutputDuration, lblOutputStatus }) {
+            lblOutputReserverType, lblOutputStudentID, lblOutputDepartment, lblOutputActivity, lblOutputDate,
+                lblOutputTime, lblOutputDuration, lblOutputStatus, lblOutputLibrarian }) {
             label.setText("---");
         }
         lblOutputHeadcount.setText("---");
+        txtLibrarianName.setText("");
     }
 
     private void updateRoomDisplay(Room room, Reservation reservation) {
@@ -1188,19 +1394,30 @@ public class RoomReservationGUI extends javax.swing.JFrame {
             roomEndTimes.remove(room.getRoomNumber());
             setRoomTimer(room.getRoomNumber(), "---");
         } else if (!roomEndTimes.containsKey(room.getRoomNumber())) {
-            roomEndTimes.put(room.getRoomNumber(), System.currentTimeMillis()
+            long activeSince = activeReservation.getActiveSince() > 0
+                ? activeReservation.getActiveSince() : System.currentTimeMillis();
+            roomEndTimes.put(room.getRoomNumber(), activeSince
                     + activeReservation.getDuration() * 3600000L);
             updateRoomTimer(room.getRoomNumber());
+        }
+    }
+
+    private void refreshRoomDisplays() {
+        for (int roomNumber = 1; roomNumber <= 5; roomNumber++) {
+            Room room = libraryManager.getRoom(roomNumber);
+            updateRoomDisplay(room, room.getActiveReservation());
         }
     }
 
     private String formatQueue(Room room) {
         StringBuilder summary = new StringBuilder("<html>");
         for (Reservation queuedReservation : room.getReservationQueue()) {
-            summary.append(queuedReservation.getReservationCode())
+            summary.append(queuedReservation.getReserverType())
+                .append(" - ")
+                .append(queuedReservation.getReservationCode())
                     .append(" (")
                     .append(queuedReservation.getNumberOfStudents())
-                    .append(" student(s), ")
+                    .append(" LRC user(s), ")
                     .append(queuedReservation.getStatus())
                     .append(")<br>");
         }
@@ -1212,8 +1429,8 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         if (activeReservation == null) {
             return "---";
         }
-        return activeReservation.getReservationCode() + " ("
-                + activeReservation.getNumberOfStudents() + " student(s))";
+        return activeReservation.getReserverType() + " - " + activeReservation.getReservationCode() + " ("
+            + activeReservation.getNumberOfStudents() + " LRC user(s))";
     }
 
     private void updateRoomTimers() {
@@ -1275,6 +1492,10 @@ public class RoomReservationGUI extends javax.swing.JFrame {
         String hour = time.substring(0, time.indexOf(':'));
         int parsedHour = Integer.parseInt(hour);
         return parsedHour < 7 ? parsedHour + 12 : parsedHour;
+    }
+
+    private int parseStartMinute(String time) {
+        return Integer.parseInt(time.substring(time.indexOf(':') + 1, time.indexOf(' ')));
     }
 
     private int parseDuration(String duration) {
